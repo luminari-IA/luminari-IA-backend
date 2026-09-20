@@ -46,6 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Evaluations
     Route::get('/evaluations', [EvaluationController::class, 'index']);
     Route::post('/evaluations', [EvaluationController::class, 'store']);
+    Route::get('/tasks', [App\Http\Controllers\Api\TaskController::class, 'index']);
 
     // Billing / Plans
     Route::get('/plans', [BillingController::class, 'getPlans']);
