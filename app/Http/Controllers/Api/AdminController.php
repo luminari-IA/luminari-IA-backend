@@ -28,25 +28,7 @@ class AdminController extends Controller
         return response()->json(['message' => 'Eliminado']);
     }
 
-    // --- LiveClasses ---
-    public function getLiveClasses() { return response()->json(['data' => LiveClass::with('subject')->get()]); }
-    public function storeLiveClass(Request $request) {
-        $validated = $request->validate([
-            'title' => 'required', 'subject_id' => 'required|exists:subjects,id', 
-            'scheduled_at' => 'required|date', 'status' => 'string', 'recording_url' => 'nullable|string'
-        ]);
-        $class = LiveClass::create($validated);
-        return response()->json(['data' => $class]);
-    }
-    public function updateLiveClass(Request $request, $id) {
-        $class = LiveClass::findOrFail($id);
-        $class->update($request->all());
-        return response()->json(['data' => $class]);
-    }
-    public function destroyLiveClass($id) {
-        LiveClass::findOrFail($id)->delete();
-        return response()->json(['message' => 'Eliminado']);
-    }
+
 
     // --- Prompt ---
     public function getPrompt() { 
