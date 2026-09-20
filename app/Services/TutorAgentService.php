@@ -69,7 +69,7 @@ class TutorAgentService
         $response = Http::withToken($apiKey)
             ->timeout(60)
             ->post('https://api.groq.com/openai/v1/chat/completions', [
-                'model' => 'llama3-8b-8192', // Modelo por defecto de Groq
+                'model' => 'openai/gpt-oss-20b', // Modelo actualizado de Groq
                 'messages' => $messagesPayload,
                 'temperature' => 0.7,
                 'max_tokens' => 1024,
