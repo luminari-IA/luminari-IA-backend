@@ -27,11 +27,26 @@ class TutorAgentService
             'content' => $message,
         ]);
 
+        // Obtener el prompt desde la base de datos o usar un fallback
+        $promptTemplate = \App\Models\PromptTemplate::where('name', 'Nexa_System')->first();
+        $systemPrompt = $promptTemplate ? $promptTemplate->content : "Eres Nexa. El estudiante es {user_name} y la materia {subject_name}.";
+
+        // Reemplazar variables dinámicas
+        $subjectName = $session->subject->name ?? 'General';
+        $userName = $user->name ?? 'Estudiante';
+        $classTitle = $session->title ?? 'Clase';
+
+        $systemPrompt = str_replace(
+            ['{user_name}', '{subject_name}', '{class_title}'],
+            [$userName, $subjectName, $classTitle],
+            $systemPrompt
+        );
+
         // Construir el historial para la API
         $messagesPayload = [
             [
                 'role' => 'system',
-                'content' => "Eres Nexa, una tutora virtual amigable, empática y experta, diseñada para la plataforma educativa Luminary. Siempre respondes en español. El estudiante quiere aprender sobre la materia: " . ($session->subject->name ?? 'General') . ". Explica los conceptos paso a paso de manera clara y didáctica."
+                'content' => $systemPrompt
             ]
         ];
 

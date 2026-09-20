@@ -13,13 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('live_classes', function (Blueprint $table) {
+        Schema::create('prompt_templates', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('subject_id')->constrained()->cascadeOnDelete();
-            $table->text('title');
-            $table->dateTime('scheduled_at');
-            $table->string('status')->default('pending'); // pending, live, completed
-            $table->text('recording_url')->nullable();
+            $table->string('name')->unique();
+            $table->text('content');
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('live_classes');
+        Schema::dropIfExists('prompt_templates');
     }
 };
