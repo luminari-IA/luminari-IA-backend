@@ -1,0 +1,53 @@
+<?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
+
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\SubjectController;
+use App\Http\Controllers\Api\LiveClassController;
+use App\Http\Controllers\Api\TutorController;
+use App\Http\Controllers\Api\EvaluationController;
+use App\Http\Controllers\Api\BillingController;
+
+Route::post('/auth/register', [AuthController::class, 'register']);
+Route::post('/auth/login', [AuthController::class, 'login']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::get('/user', function (Request $request) {
+        return clone $request->user()->load('plan'); // Devuelve usuario con su plan
+    });
+
+    // Subjects
+    Route::get('/subjects', [SubjectController::class, 'index']);
+    Route::get('/subjects/{id}', [SubjectController::class, 'show']);
+
+    // Live Classes
+    Route::get('/live-classes', [LiveClassController::class, 'index']);
+    Route::get('/live-classes/{id}', [LiveClassController::class, 'show']);
+
+    // Tutor IA (Nexa)
+    Route::post('/tutor/session', [TutorController::class, 'startSession']);
+    Route::post('/tutor/session/{id}/message', [TutorController::class, 'sendMessage']);
+    Route::get('/tutor/session/{id}/history', [TutorController::class, 'getHistory']);
+
+    // Evaluations
+    Route::get('/evaluations', [EvaluationController::class, 'index']);
+    Route::post('/evaluations', [EvaluationController::class, 'store']);
+
+    // Billing / Plans
+    Route::get('/plans', [BillingController::class, 'getPlans']);
+    Route::get('/my-plan', [BillingController::class, 'myPlan']);
+});

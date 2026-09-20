@@ -1,0 +1,441 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Luminary API",
+        "description": "Documentación interactiva de la API de Luminary. Todos los endpoints (excepto login/registro) requieren autenticación Bearer con Sanctum.",
+        "contact": {
+            "email": "soporte@luminary.edu"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Registrar un nuevo estudiante",
+                "operationId": "c7bb21a0d87049e161b8e4c9b0d909f2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Juan Perez"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "juan@test.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "secret123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "secret123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Registro exitoso"
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Iniciar sesión",
+                "operationId": "dd51a484b7fa0f97c7680fdbde14cf5f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "example": "juan@test.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "secret123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login exitoso"
+                    }
+                }
+            }
+        },
+        "/api/plans": {
+            "get": {
+                "tags": [
+                    "Planes y Facturación"
+                ],
+                "summary": "Listar todos los planes disponibles",
+                "operationId": "7736b7493eef9c90cb36fd9efc74f18f",
+                "responses": {
+                    "200": {
+                        "description": "Lista de planes"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/my-plan": {
+            "get": {
+                "tags": [
+                    "Planes y Facturación"
+                ],
+                "summary": "Ver detalles de mi plan actual",
+                "operationId": "4ffe9b11f30a908189cea429e0fc090f",
+                "responses": {
+                    "200": {
+                        "description": "Detalle del plan del estudiante"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/evaluations": {
+            "get": {
+                "tags": [
+                    "Evaluaciones"
+                ],
+                "summary": "Obtener todas las evaluaciones del estudiante",
+                "operationId": "52a659e91a7a19fa168850e97a555cb3",
+                "responses": {
+                    "200": {
+                        "description": "Lista de evaluaciones"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Evaluaciones"
+                ],
+                "summary": "Registrar una nueva evaluación",
+                "operationId": "1f83b66d8f7bda08691296c63f45995d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "subject_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "score": {
+                                        "type": "number",
+                                        "example": 9.5
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Evaluación registrada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/live-classes": {
+            "get": {
+                "tags": [
+                    "Clases en Vivo"
+                ],
+                "summary": "Listar clases en vivo",
+                "operationId": "1a5d722a197db06d02c8cfaccad9d1a5",
+                "parameters": [
+                    {
+                        "name": "subject_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de clases en vivo"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/live-classes/{id}": {
+            "get": {
+                "tags": [
+                    "Clases en Vivo"
+                ],
+                "summary": "Detalle de una clase en vivo",
+                "operationId": "8371678ca7df210180354e62e35b53ad",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalle de la clase"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/subjects": {
+            "get": {
+                "tags": [
+                    "Materias"
+                ],
+                "summary": "Listar todas las materias activas",
+                "operationId": "7ec04c0df2c6d2830d25036d6f4d4b61",
+                "responses": {
+                    "200": {
+                        "description": "Lista de materias"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/subjects/{id}": {
+            "get": {
+                "tags": [
+                    "Materias"
+                ],
+                "summary": "Obtener detalle de una materia",
+                "operationId": "67f17334a964551021eb9c84cfc5ec9a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Detalle de la materia"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/tutor/session": {
+            "post": {
+                "tags": [
+                    "Tutor IA (Nexa)"
+                ],
+                "summary": "Iniciar una nueva sesión de tutoría",
+                "operationId": "8a1ad8736ae3c2fdccffa75bf015fdbc",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "subject_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Dudas sobre fracciones"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Sesión creada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/tutor/session/{id}/message": {
+            "post": {
+                "tags": [
+                    "Tutor IA (Nexa)"
+                ],
+                "summary": "Enviar un mensaje a Nexa en una sesión",
+                "operationId": "421ad1c30145c133032791f534e56d00",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "example": "¿Me explicas cómo sumar 1/2 y 1/4?"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Respuesta de Nexa"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/tutor/session/{id}/history": {
+            "get": {
+                "tags": [
+                    "Tutor IA (Nexa)"
+                ],
+                "summary": "Obtener historial de chat de una sesión",
+                "operationId": "f6fc5a6d6cd0f2bc57163cd7b7c72a44",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Historial de mensajes"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Autenticación",
+            "description": "Autenticación"
+        },
+        {
+            "name": "Planes y Facturación",
+            "description": "Planes y Facturación"
+        },
+        {
+            "name": "Evaluaciones",
+            "description": "Evaluaciones"
+        },
+        {
+            "name": "Clases en Vivo",
+            "description": "Clases en Vivo"
+        },
+        {
+            "name": "Materias",
+            "description": "Materias"
+        },
+        {
+            "name": "Tutor IA (Nexa)",
+            "description": "Tutor IA (Nexa)"
+        }
+    ]
+}
