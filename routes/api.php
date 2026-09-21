@@ -42,6 +42,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/tutor/session', [TutorController::class, 'startSession']);
     Route::post('/tutor/session/{id}/message', [TutorController::class, 'sendMessage']);
     Route::get('/tutor/session/{id}/history', [TutorController::class, 'getHistory']);
+    Route::post('/tutor/session/{id}/finish', [TutorController::class, 'finishSession']);
 
     // Evaluations
     Route::get('/evaluations', [EvaluationController::class, 'index']);

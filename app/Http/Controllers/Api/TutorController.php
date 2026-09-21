@@ -109,4 +109,38 @@ class TutorController extends Controller
         $session = TutorSession::where('user_id', $request->user()->id)->findOrFail($sessionId);
         return response()->json(['data' => $session->messages]);
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/tutor/session/{id}/finish",
+     *     tags={"Tutor IA (Nexa)"},
+     *     summary="Finaliza una sesión de tutoría y genera una tarea",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer"), example=1),
+     *     @OA\Response(response="200", description="Sesión finalizada y tarea generada")
+     * )
+     */
+    public function finishSession(Request $request, $sessionId)
+    {
+        $user = $request->user();
+        $session = TutorSession::where('user_id', $user->id)->findOrFail($sessionId);
+
+        try {
+            $taskData = $this->tutorService->generateTaskForSession($user, $session);
+            
+            // Crear tarea
+            $task = \App\Models\Task::create([
+                'user_id' => $user->id,
+                'subject_id' => $session->subject_id,
+                'title' => $taskData['title'],
+                'description' => $taskData['description'],
+                'due_date' => now()->addDays(7), // Tarea para dentro de una semana
+                'nexa_note' => 'Asignada automáticamente al finalizar tu clase de ' . ($session->subject->name ?? 'General'),
+            ]);
+
+            return response()->json(['message' => 'Sesión finalizada exitosamente', 'task' => $task]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al finalizar sesión: ' . $e->getMessage()], 500);
+        }
+    }
 }

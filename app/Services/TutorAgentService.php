@@ -92,4 +92,55 @@ class TutorAgentService
 
         return $replyContent;
     }
+
+    /**
+     * Pide a Nexa que genere una tarea basada en la sesión.
+     */
+    public function generateTaskForSession(User $user, TutorSession $session): array
+    {
+        $subjectName = $session->subject->name ?? 'General';
+        
+        $systemPrompt = "Eres Nexa, la IA tutora. La clase de $subjectName acaba de terminar. Basándote en la conversación anterior (si la hubo) o en el tema en general, genera SÓLO una breve tarea o reto práctico de 1 párrafo para el estudiante.
+NO uses formato Markdown. Responde en texto plano. No incluyas saludos ni despedidas, solo la descripción de la tarea.";
+
+        $messagesPayload = [
+            ['role' => 'system', 'content' => $systemPrompt]
+        ];
+
+        // Añadir el contexto previo
+        $history = $session->messages()->orderBy('created_at', 'asc')->take(10)->get();
+        foreach ($history as $msg) {
+            $messagesPayload[] = [
+                'role' => $msg->role,
+                'content' => $msg->content,
+            ];
+        }
+
+        $apiKey = $this->credentialService->getApiKey($user);
+
+        if (empty($apiKey)) {
+            throw new Exception("La clave API de Groq no está configurada.");
+        }
+
+        $response = Http::withToken($apiKey)
+            ->timeout(60)
+            ->post('https://api.groq.com/openai/v1/chat/completions', [
+                'model' => 'openai/gpt-oss-20b',
+                'messages' => $messagesPayload,
+                'temperature' => 0.7,
+                'max_tokens' => 500,
+            ]);
+
+        if ($response->failed()) {
+            throw new Exception("Error al contactar a Nexa (Groq): " . $response->body());
+        }
+
+        $data = $response->json();
+        $taskDescription = $data['choices'][0]['message']['content'] ?? 'Escribe un resumen de lo que aprendiste hoy.';
+
+        return [
+            'title' => 'Reto de ' . $subjectName,
+            'description' => trim($taskDescription)
+        ];
+    }
 }
