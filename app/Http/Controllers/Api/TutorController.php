@@ -91,6 +91,7 @@ class TutorController extends Controller
 
             return response()->json(['reply' => $reply]);
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Nexa Error: ' . $e->getMessage() . ' at ' . $e->getFile() . ':' . $e->getLine());
             return response()->json(['message' => $e->getMessage()], 500);
         }
     }

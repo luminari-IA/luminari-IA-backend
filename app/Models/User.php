@@ -35,6 +35,17 @@ class User extends Authenticatable
         'tts_speed',
     ];
 
+    protected $appends = [
+        'profile_photo_url',
+    ];
+
+    public function getProfilePhotoUrlAttribute()
+    {
+        return $this->profile_photo_path
+            ? asset('storage/' . $this->profile_photo_path)
+            : null;
+    }
+
     protected function casts(): array
     {
         return [

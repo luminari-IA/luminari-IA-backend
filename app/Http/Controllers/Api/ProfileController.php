@@ -16,7 +16,7 @@ class ProfileController extends Controller
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
-            'profile_photo_path' => $user->profile_photo_path ? asset('storage/' . $user->profile_photo_path) : null,
+            'profile_photo_url' => $user->profile_photo_url,
             'theme_color' => $user->theme_color,
             'font_family' => $user->font_family,
             'border_style' => $user->border_style,
@@ -75,7 +75,7 @@ class ProfileController extends Controller
             'user' => [
                 'name' => $user->name,
                 'email' => $user->email,
-                'profile_photo_path' => $user->profile_photo_path ? asset('storage/' . $user->profile_photo_path) : null,
+                'profile_photo_url' => $user->profile_photo_url,
                 'theme_color' => $user->theme_color,
                 'font_family' => $user->font_family,
                 'border_style' => $user->border_style,

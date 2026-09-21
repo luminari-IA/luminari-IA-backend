@@ -81,7 +81,7 @@ class TutorAgentService
         }
 
         // Determinar modelo
-        $model = $image ? 'llama-3.2-11b-vision-preview' : 'openai/gpt-oss-20b';
+        $model = $image ? 'llama-3.2-90b-vision-preview' : 'openai/gpt-oss-20b';
 
         // Llamada a la API
         $response = Http::withToken($apiKey)
