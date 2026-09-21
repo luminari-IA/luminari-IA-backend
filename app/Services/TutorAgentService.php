@@ -19,7 +19,7 @@ class TutorAgentService
     /**
      * Envía un mensaje a Groq (Nexa) y obtiene la respuesta.
      */
-    public function sendMessage(User $user, TutorSession $session, string $message): string
+    public function sendMessage(User $user, TutorSession $session, string $message, ?string $image = null): string
     {
         // Guardar mensaje del usuario
         $session->messages()->create([
@@ -27,11 +27,9 @@ class TutorAgentService
             'content' => $message,
         ]);
 
-        // Obtener el prompt desde la base de datos o usar un fallback
         $promptTemplate = \App\Models\PromptTemplate::where('name', 'Nexa_System')->first();
         $systemPrompt = $promptTemplate ? $promptTemplate->content : "Eres Nexa. El estudiante es {user_name} y la materia {subject_name}.";
 
-        // Reemplazar variables dinámicas
         $subjectName = $session->subject->name ?? 'General';
         $userName = $user->name ?? 'Estudiante';
         $classTitle = $session->title ?? 'Clase';
@@ -43,7 +41,7 @@ class TutorAgentService
         );
 
         $systemPrompt .= "\n\nIMPORTANTE: No uses formato Markdown (como ##, *** o tablas) a menos que sea indispensable. Si haces listas, usa números o guiones simples. Responde siempre de forma conversacional y fácil de leer en voz alta.";
-        $systemPrompt .= "\n\nSi el usuario menciona que está encendiendo su cámara, compartiendo pantalla, o te pregunta si puedes ver su entorno/pantalla, ASUME EL ROL y dile con entusiasmo que SÍ puedes verlo. Sin embargo, explícale amablemente que para mayor precisión (debido a la luz, resolución o tipo de letra), prefieres que te lea o dicte la fórmula, número o texto en voz alta. NUNCA digas que no tienes la capacidad de ver cámaras o pantallas.";
+        $systemPrompt .= "\n\nSi el usuario adjunta una imagen a su mensaje, significa que te está mostrando su cámara web o pantalla compartida. Analiza la imagen detalladamente para responder su duda basándote en lo que ves en ella. NO le pidas que te lea la información si tú mismo puedes leerla en la imagen.";
 
         // Construir el historial para la API
         $messagesPayload = [
@@ -53,13 +51,27 @@ class TutorAgentService
             ]
         ];
 
-        // Añadir contexto previo (últimos 10 mensajes)
-        $history = $session->messages()->orderBy('created_at', 'asc')->take(10)->get();
-        foreach ($history as $msg) {
-            $messagesPayload[] = [
-                'role' => $msg->role,
-                'content' => $msg->content,
-            ];
+        // Añadir contexto previo
+        $history = $session->messages()->orderBy('created_at', 'asc')->get();
+        
+        foreach ($history as $index => $msg) {
+            $isLastMessage = ($index === count($history) - 1);
+            
+            // Si es el último mensaje y hay una imagen
+            if ($isLastMessage && $msg->role === 'user' && $image) {
+                $messagesPayload[] = [
+                    'role' => 'user',
+                    'content' => [
+                        ['type' => 'text', 'text' => $msg->content],
+                        ['type' => 'image_url', 'image_url' => ['url' => $image]]
+                    ]
+                ];
+            } else {
+                $messagesPayload[] = [
+                    'role' => $msg->role,
+                    'content' => $msg->content,
+                ];
+            }
         }
 
         $apiKey = $this->credentialService->getApiKey($user);
@@ -68,11 +80,14 @@ class TutorAgentService
             throw new Exception("La clave API de Groq no está configurada.");
         }
 
-        // Llamada a la API de Groq
+        // Determinar modelo
+        $model = $image ? 'llama-3.2-11b-vision-preview' : 'openai/gpt-oss-20b';
+
+        // Llamada a la API
         $response = Http::withToken($apiKey)
             ->timeout(60)
             ->post('https://api.groq.com/openai/v1/chat/completions', [
-                'model' => 'openai/gpt-oss-20b', // Modelo actualizado de Groq
+                'model' => $model,
                 'messages' => $messagesPayload,
                 'temperature' => 0.7,
                 'max_tokens' => 1024,

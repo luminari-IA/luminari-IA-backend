@@ -69,7 +69,8 @@ class TutorController extends Controller
     public function sendMessage(Request $request, $sessionId)
     {
         $request->validate([
-            'message' => 'required|string'
+            'message' => 'required|string',
+            'image' => 'nullable|string'
         ]);
 
         $user = $request->user();
@@ -83,7 +84,7 @@ class TutorController extends Controller
         }
 
         try {
-            $reply = $this->tutorService->sendMessage($user, $session, $request->message);
+            $reply = $this->tutorService->sendMessage($user, $session, $request->message, $request->image);
             
             // Registrar un estimado de 150 tokens gastados (puede ajustarse usando el usage de la API real)
             $this->usageService->recordUsage($user, 150);
