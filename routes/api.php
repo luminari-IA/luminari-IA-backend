@@ -30,6 +30,10 @@ Route::middleware('auth:sanctum')->group(function () {
         return clone $request->user()->load('plan'); // Devuelve usuario con su plan
     });
 
+    // Profile Settings
+    Route::get('/profile', [\App\Http\Controllers\Api\ProfileController::class, 'getProfile']);
+    Route::post('/profile/update', [\App\Http\Controllers\Api\ProfileController::class, 'updateProfile']);
+
     // Subjects
     Route::get('/subjects', [SubjectController::class, 'index']);
     Route::get('/subjects/{id}', [SubjectController::class, 'show']);
