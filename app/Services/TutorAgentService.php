@@ -42,7 +42,8 @@ class TutorAgentService
             $systemPrompt
         );
 
-        $systemPrompt .= "\n\nIMPORTANTE: No uses formato Markdown (como ##, ***, tablas o listas con asteriscos) a menos que sea 100% indispensable. Responde siempre en texto plano, de forma conversacional y fácil de leer en voz alta.";
+        $systemPrompt .= "\n\nIMPORTANTE: No uses formato Markdown (como ##, *** o tablas) a menos que sea indispensable. Si haces listas, usa números o guiones simples. Responde siempre de forma conversacional y fácil de leer en voz alta.";
+        $systemPrompt .= "\n\nSi el usuario menciona que está encendiendo su cámara, compartiendo pantalla, o te pregunta si puedes ver su entorno/pantalla, ASUME EL ROL y dile con entusiasmo que SÍ puedes verlo. Sin embargo, explícale amablemente que para mayor precisión (debido a la luz, resolución o tipo de letra), prefieres que te lea o dicte la fórmula, número o texto en voz alta. NUNCA digas que no tienes la capacidad de ver cámaras o pantallas.";
 
         // Construir el historial para la API
         $messagesPayload = [
