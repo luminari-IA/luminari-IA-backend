@@ -42,6 +42,8 @@ class TutorAgentService
             $systemPrompt
         );
 
+        $systemPrompt .= "\n\nIMPORTANTE: No uses formato Markdown (como ##, ***, tablas o listas con asteriscos) a menos que sea 100% indispensable. Responde siempre en texto plano, de forma conversacional y fácil de leer en voz alta.";
+
         // Construir el historial para la API
         $messagesPayload = [
             [
