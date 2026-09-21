@@ -21,6 +21,18 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'plan_id',
+        'stripe_id',
+        'pm_type',
+        'pm_last_four',
+        'trial_ends_at',
+        'role', // 'admin', 'student'
+        'profile_photo_path',
+        'theme_color',
+        'font_family',
+        'border_style',
+        'reduced_animations',
+        'tts_speed',
     ];
 
     protected function casts(): array
