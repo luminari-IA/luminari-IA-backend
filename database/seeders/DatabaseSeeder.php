@@ -14,13 +14,37 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        // Planes
+        \App\Models\Plan::updateOrCreate(
+            ['id' => 1],
+            [
+                'name' => 'Plan Gratuito',
+                'description' => 'Acceso limitado a Nexa',
+                'price' => 0.00,
+                'tokens_limit' => 5000,
+                'live_classes_limit' => 1
+            ]
+        );
+
+        \App\Models\Plan::updateOrCreate(
+            ['id' => 2],
+            [
+                'name' => 'Plan Premium',
+                'description' => 'Acceso ilimitado a Nexa y todas las clases',
+                'price' => 5.00,
+                'tokens_limit' => 0, // Ilimitado
+                'live_classes_limit' => 0 // Ilimitado
+            ]
+        );
+
         // Administrador
         \App\Models\User::updateOrCreate(
             ['email' => 'shirokague.devs@gmail.com'],
             [
                 'name' => 'Administrador',
                 'password' => bcrypt('shirkagueadministrador20252103*'),
-                'role' => 'admin'
+                'role' => 'admin',
+                'plan_id' => 2 // Premium
             ]
         );
 
