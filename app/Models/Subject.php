@@ -19,4 +19,9 @@ class Subject extends Model
     {
         return $this->hasMany(LiveClass::class);
     }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class)->withPivot('level')->withTimestamps();
+    }
 }

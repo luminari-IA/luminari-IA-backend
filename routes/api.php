@@ -35,8 +35,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile/update', [\App\Http\Controllers\Api\ProfileController::class, 'updateProfile']);
 
     // Subjects
+    Route::get('/subjects/available', [\App\Http\Controllers\Api\UserSubjectController::class, 'available']);
     Route::get('/subjects', [SubjectController::class, 'index']);
     Route::get('/subjects/{id}', [SubjectController::class, 'show']);
+
+    // User Enrolled Subjects
+    Route::get('/user/subjects', [\App\Http\Controllers\Api\UserSubjectController::class, 'index']);
+    Route::post('/user/subjects', [\App\Http\Controllers\Api\UserSubjectController::class, 'store']);
 
     // Live Classes
     Route::get('/live-classes', [LiveClassController::class, 'index']);

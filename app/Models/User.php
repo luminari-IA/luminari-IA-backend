@@ -60,6 +60,11 @@ class User extends Authenticatable
         return $this->belongsTo(Plan::class);
     }
 
+    public function subjects()
+    {
+        return $this->belongsToMany(Subject::class)->withPivot('level')->withTimestamps();
+    }
+
     public function tutorSessions()
     {
         return $this->hasMany(TutorSession::class);
